@@ -20,7 +20,10 @@ const server = http.createServer((req, res) => {
       '<title>Home</title></head><body><header><nav><a href="/">Home</a><a href="/team">Team</a></nav></header>';
     content = generateJunk(content);
     content += "</body></html>";
-    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    res.writeHead(200, {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
     res.write(content);
     res.end();
   } else {
