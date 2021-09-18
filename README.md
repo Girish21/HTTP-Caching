@@ -143,8 +143,6 @@ Checking the network tab confirms that the whole payload is not sent over the ne
 
 ## Stale While Revalidate
 
-This term is gaining a lot of traction. Next.js released a new feature ISR (Incremental Static Regeneration) last year. What this is beyond the scope of today's talk, I'll try to cover it in a future talk. We'll see a version of it today.
-
 ### Problem with ETag
 
 The problem with ETag is to validate the staleness of a cached resource the client/cache store has to reach the origin server to verify the ETag, but if the server is another "Global" region, or the server is just slow we are not gaining much performance by just relying on the ETag, sure we're transferring fewer data over the wire, but we don't gain much performance and the website will not feel "snappy".
