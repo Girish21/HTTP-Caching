@@ -73,6 +73,102 @@ _(there is a better way to handle this cache and we'll see later)_
 
 Okay, that's a lot of theory let's see how this all work.
 
+## Playing around with caching headers
+
+We have a simple webserver which returns some HTML content. It has two pages, _Home_ and _Team_. Currently there is no caching set up.
+
+When we check the networks tab and try swtiching between the two pages, we can see around 180KB of data beeing transfered between the client and the server.
+
+Let's try adding some different caching headers.
+
+### Don't cache anything
+
+Let's try disabling cache of the `teams` page,
+
+```js
+Cache-Control: no-store
+```
+
+Nothing much changed, or is it? Let's try clicking on the back and forward navigation buttons in the browser and check the networks tab. Surprised?. We actually control our cache now!
+
+### Cache for some time
+
+Let's try caching the `teams` page for 10 seconds,
+
+```js
+Cache-Control: max-age=10
+```
+
+## Freshness
+
+Caching keeps the performance of the website fast and makes the website responsive. But, as the famous saying, caching is hard if not done right.
+
+As we want the website to be fast and responsive, we also want our users to consume fresh data and not consume stale data. So how do we make sure the cache stays fresh and is not stale?
+
+There are multiple ways, we are going to look at **ETag**.
+
+### ETag
+
+ETag, is part of the HTTP reponse header, is an identifier for a specific version of a resource.
+
+If an ETag is set the client will send a special request header `If-None-Match` on the next request. The value of this is the ETag the client recieved on the previous request.
+
+Let's look at how this works.
+
+We can quickly generate an ETag using MD-5 hash. And we'll add it to the teams route.
+
+```js
+const cryto = require("crypto");
+
+const etag = crypto.createHash("md5").update(content).digest("hex");
+```
+
+If we check the networks tab, we can see that the server response has an `ETag` in the response headers. And if we refresh the server again the client sends `If-None-Match` header in the request headers. Let's see how we can use that and cache resources and as well as keep the cached resources fresh.
+
+The browser sends back the `ETag` back to the server. The server can use this to compare with the `ETag` generated at the server and validate that the cached resource is valida or stale. If it's valid, let the client serve the cached rource else send the new response and with the newly generated `Etag` for the fresh resource.
+
+```js
+const etagFromClient = req.headers["if-none-match"]; // get the header from the request
+
+if (etag === etagFromClient) {
+  return res.writeHead(304).end(); // if the content is fresh and not stale, send a 304 status to the client stating the content is fresh and serve from the cache
+}
+```
+
+If the cached resource is not stale, the server asks the client to use the cached resource and does not send the full response payload.
+
+Checking the netwroks tab confirms that the whole payload is not sent over the network, and the payload size has gone from **_180KB_** to **_113B_** 🤯.
+
+(there is a package to generate ETag, so no need to memorize this above syntax to generate ETags. And if we use `express` as our server, it generates `ETag` by default for all the end points, and also validates the version of cached resource if the request has `If-None-Match` header in the request)
+
+## Stale While Revalidate
+
+This term is gaining lot of traction. Next.js released a new feature ISR (Incremental Static Regeneration) last year. What this is beyond the scope of today's talk, I'll try to cover it in a future talk. We'll see a version of it today.
+
+### Problem with ETag
+
+The problem with ETag is to validate the staleness of a cached resource the client/cache store has to reach the origin server to verify the ETag, but if the server is another "Global" region, or the server is just slow we are not gaining much performance by just relying on the ETag, sure we're transfering less data over the wire, but we don't gain much performance and the website will not feel "snappy".
+
+This is where CDN comes in. What CDN does is take the resources from the origin server and keep the resources close to the users across the "global" regions, so the latency will be low and with proper cache configurations the CDN will not even check the origin server before delivering content to the client. Let's see how.
+
+I have not disclosed another `Cache-Control` directive yet.
+
+### s-maxage
+
+`max-age` directive is used by `private` cache stores (the client), but we can also cache the resources in a CDN. We can get a question if the resources can be cased at the client, why do we need a CDN? One of the obvious reasons is we can purge a CDNs cache, but we have no control over the users client cache. If a bad resource is cached indefinitely at the client, there is no way to purge it unless it is done by the user. So how do we cache it at the CDN.
+
+CDNs come under the cache store category of `shared` caches (shared between multiple users), and `s-maxage` controls the "freshness" of a source in a shared cache store.
+
+### How does it help?
+
+<p align="center">
+  <img width="470" height="270" src="./assets/stale_while_revalidate.png" />
+</p>
+
+When the server is busy working to generate a new document with updated information, the CDN marks the resource as `STALE` and sennds back the stale response to the user so that the user has something to look at till the CDNs cache is updated with the "Fresh" resource. The next user visting will get the updated resources from the CDN.
+
+This type of caching is great when the content of the resources wont change frequently, but we're giving an option that even though it changes it'll not be stale for a long time!
+
 ![MDN Cache](https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching/http_cache_type.png)
 
 ## Reference Links
@@ -80,3 +176,5 @@ Okay, that's a lot of theory let's see how this all work.
 - [Remix Run - Introduction to HTTP Caching by Ryan Florence](https://www.youtube.com/watch?v=3XkU_DXcgl0&t=1s)
 - [MDN HTTP Caching](https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching)
 - [Difference between `no-cache` and `must-revalidate`](https://stackoverflow.com/questions/18148884/difference-between-no-cache-and-must-revalidate)
+- [ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag)
+- [Stale While Revalidate](https://web.dev/stale-while-revalidate/)
