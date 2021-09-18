@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
     content += "</body></html>";
     res.writeHead(200, {
       "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "no-store",
+      "Cache-Control": "max-age=10",
     });
     res.write(content);
     res.end();
