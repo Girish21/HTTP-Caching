@@ -11,7 +11,7 @@ The performance of websites and applications can be significantly improved by re
 Let's look at a typical server-client setup.
 
 <p align="center">
-  <img width="300" height="150" src="https://github.com/Girish21/HTTP-Caching/blob/66d652bf70d90594055984f683513500d1a4fd69/assets/typical_server.png" />
+  <img width="300" height="150" src="https://github.com/Girish21/HTTP-Caching/blob/252ccedb46906e759c4decb706091dc4963fe3de/assets/typical_server.png" />
 </p>
 
 The client request some data from the server, the server works on it and returns a response to the client. But, this is not optimal for performance and we can do better. Let's see how.
@@ -37,7 +37,7 @@ Cache-Control: no-cache
 ```
 
 <p align="center">
-  <img width="300" height="150" src="https://github.com/Girish21/HTTP-Caching/blob/66d652bf70d90594055984f683513500d1a4fd69/assets/revalidate.png" />
+  <img width="300" height="170" src="https://github.com/Girish21/HTTP-Caching/blob/252ccedb46906e759c4decb706091dc4963fe3de/assets/revalidate.png" />
 </p>
 
 ### Public and Private
