@@ -2,11 +2,11 @@
 
 ## What is cache?
 
-A harware or software component that stores data so that future requests for that data can be served faster. The data stored in a cache might be the result of an earlier computation or a copy of data stored elsewhere.
+A hardware or software component that stores data so that future requests for that data can be served faster. The data stored in a cache might be the result of an earlier computation or a copy of data stored elsewhere.
 
 ## Why do we need a cache?
 
-The performance of web sites and applications can be significantly improved by reusing previously fetched resources. Web caches reduce latency and network traffic and thus lessen the time needed to display a representation of a resource.
+The performance of websites and applications can be significantly improved by reusing previously fetched resources. Web caches reduce latency and network traffic and thus lessen the time needed to display a representation of a resource.
 
 Let's look at a typical server-client setup.
 
@@ -14,7 +14,7 @@ Let's look at a typical server-client setup.
   <img width="300" height="150" src="./assets/typical_server.png" />
 </p>
 
-The clent request some data from the server, the server works on it and returns a response to the client. But, this is not optimal for performance and we can do better. Let's see how.
+The client request some data from the server, the server works on it and returns a response to the client. But, this is not optimal for performance and we can do better. Let's see how.
 
 ## How can we control caching?
 
@@ -22,7 +22,7 @@ We can do that by using the `Cache-Control` header field. We can use this header
 
 ### No cache
 
-This directive disables all the caching of client request or server response. Every request will hit the server and the full response is downloaded each and every time.
+This directive disables all the caching of client requests or server responses. Every request will hit the server and the full response is downloaded every time.
 
 ```js
 Cache-Control: no-store
@@ -30,7 +30,7 @@ Cache-Control: no-store
 
 ### Cache but revalidate
 
-This directive is interesting, the cache store will validate the staleness of the cache with the origin server and if unchanged the cached version is returned to the client.
+This directive is interesting, the cache-store will validate the staleness of the cache with the origin server and if unchanged the cached version is returned to the client.
 
 ```js
 Cache-Control: no-cache
@@ -42,13 +42,13 @@ Cache-Control: no-cache
 
 ### Public and Private
 
-Public directive indicates that the response may be cached by any cache. Usefull for caching assets like web fonts, images, style sheet
+The `Public` directive indicates that the response may be cached by any cache. Useful for caching assets like web fonts, images, style sheet
 
 ```js
 Cache-Control: public
 ```
 
-Private directive indicates that the response is intended for a single user only and must not be stored by a shared cache.
+The `Private` directive indicates that the response is intended for a single user only and must not be stored by a shared cache.
 
 ```js
 Cache-Control: private
@@ -66,30 +66,30 @@ Cache-Control: max-age=<seconds>
 
 The cache store must verify the status stale with the origin server before using the cached resource.
 
-So what is the deference with `no-cache` directive? The important distinction is, when `no-cache` directive is used the cache store will return the cached resource even if the origin server fails to validate the staleness of the cache, where as if `must-revalidate` directive is used, and if the origin server fails to validate the staleness of a cached resource, a `504` error is thrown and the stale resource is not used by the client.
+So what is the difference with `no-cache directive? The important distinction is when the`no-cache`directive is used the cache-store will return the cached resource even if the origin server fails to validate the staleness of the cache, whereas if`must-revalidate directive is used, and if the origin server fails to validate the staleness of a cached resource, a `504` error is thrown and the stale resource is not used by the client.
 
-Thus `must-revalidate` should be used only for critical transactions only.
+Thus `must-revalidate` should be used only for critical transactions.
 _(there is a better way to handle this cache and we'll see later)_
 
-Okay, that's a lot of theory let's see how this all work.
+Okay, that's a lot of theory let's see how this all works.
 
 ## Playing around with caching headers
 
-We have a simple webserver which returns some HTML content. It has two pages, _Home_ and _Team_. Currently there is no caching set up.
+We have a simple web server that returns some HTML content. It has two pages, _Home_ and _Team_. Currently, there is no caching setup.
 
-When we check the networks tab and try swtiching between the two pages, we can see around 180KB of data beeing transfered between the client and the server.
+When we check the networks tab and try switching between the two pages, we can see around 180KB of data being transferred between the client and the server.
 
 Let's try adding some different caching headers.
 
 ### Don't cache anything
 
-Let's try disabling cache of the `teams` page,
+Let's try disabling the cache of the `teams` page,
 
 ```js
 Cache-Control: no-store
 ```
 
-Nothing much changed, or is it? Let's try clicking on the back and forward navigation buttons in the browser and check the networks tab. Surprised?. We actually control our cache now!
+Nothing much changed, or is it? Let's try clicking on the back and forward navigation buttons in the browser and check the networks tab. Surprised?. We control our cache now!
 
 ### Cache for some time
 
@@ -109,13 +109,13 @@ There are multiple ways, we are going to look at **ETag**.
 
 ### ETag
 
-ETag, is part of the HTTP reponse header, is an identifier for a specific version of a resource.
+ETag, which is part of the HTTP response header, is an identifier for a specific version of a resource.
 
-If an ETag is set the client will send a special request header `If-None-Match` on the next request. The value of this is the ETag the client recieved on the previous request.
+If an ETag is set the client will send a special request header `If-None-Match` on the next request. The value of this is the ETag the client received on the previous request.
 
 Let's look at how this works.
 
-We can quickly generate an ETag using MD-5 hash. And we'll add it to the teams route.
+We can quickly generate an ETag using MD-5 hash. And we'll add it to the team's route.
 
 ```js
 const cryto = require("crypto");
@@ -123,9 +123,9 @@ const cryto = require("crypto");
 const etag = crypto.createHash("md5").update(content).digest("hex");
 ```
 
-If we check the networks tab, we can see that the server response has an `ETag` in the response headers. And if we refresh the server again the client sends `If-None-Match` header in the request headers. Let's see how we can use that and cache resources and as well as keep the cached resources fresh.
+If we check the networks tab, we can see that the server response has an `ETag` in the response headers. And if we refresh the page again the client sends the `If-None-Match` header in the request headers. Let's see how we can use that and cache resources and as well as keep the cached resources fresh.
 
-The browser sends back the `ETag` back to the server. The server can use this to compare with the `ETag` generated at the server and validate that the cached resource is valida or stale. If it's valid, let the client serve the cached rource else send the new response and with the newly generated `Etag` for the fresh resource.
+The browser sends the `ETag` back to the server. The server can use this to compare with the `ETag` generated at the server and validate that the cached resource is valid or stale. If it's valid, let the client serve the cached resource else send the new response and with the newly generated `Etag` for the fresh resource.
 
 ```js
 const etagFromClient = req.headers["if-none-match"]; // get the header from the request
@@ -137,27 +137,27 @@ if (etag === etagFromClient) {
 
 If the cached resource is not stale, the server asks the client to use the cached resource and does not send the full response payload.
 
-Checking the netwroks tab confirms that the whole payload is not sent over the network, and the payload size has gone from **_180KB_** to **_113B_** 🤯.
+Checking the network tab confirms that the whole payload is not sent over the network, and the payload size has gone from **_180KB_** to **_113B_** 🤯.
 
-(there is a package to generate ETag, so no need to memorize this above syntax to generate ETags. And if we use `express` as our server, it generates `ETag` by default for all the end points, and also validates the version of cached resource if the request has `If-None-Match` header in the request)
+(there is a package to generate ETag, so no need to memorize this above syntax to generate ETags. And if we use `express` as our server, it generates `ETag` by default for all the endpoints, and also validates the version of cached resource if the request has `If-None-Match` header in the request)
 
 ## Stale While Revalidate
 
-This term is gaining lot of traction. Next.js released a new feature ISR (Incremental Static Regeneration) last year. What this is beyond the scope of today's talk, I'll try to cover it in a future talk. We'll see a version of it today.
+This term is gaining a lot of traction. Next.js released a new feature ISR (Incremental Static Regeneration) last year. What this is beyond the scope of today's talk, I'll try to cover it in a future talk. We'll see a version of it today.
 
 ### Problem with ETag
 
-The problem with ETag is to validate the staleness of a cached resource the client/cache store has to reach the origin server to verify the ETag, but if the server is another "Global" region, or the server is just slow we are not gaining much performance by just relying on the ETag, sure we're transfering less data over the wire, but we don't gain much performance and the website will not feel "snappy".
+The problem with ETag is to validate the staleness of a cached resource the client/cache store has to reach the origin server to verify the ETag, but if the server is another "Global" region, or the server is just slow we are not gaining much performance by just relying on the ETag, sure we're transferring fewer data over the wire, but we don't gain much performance and the website will not feel "snappy".
 
-This is where CDN comes in. What CDN does is take the resources from the origin server and keep the resources close to the users across the "global" regions, so the latency will be low and with proper cache configurations the CDN will not even check the origin server before delivering content to the client. Let's see how.
+This is where CDN comes in. What CDN does is take the resources from the origin server and keep the resources close to the users across the "global" regions, so the latency will be low and with proper cache configurations, the CDN will not even check the origin server before delivering content to the client. Let's see how.
 
 I have not disclosed another `Cache-Control` directive yet.
 
 ### s-maxage
 
-`max-age` directive is used by `private` cache stores (the client), but we can also cache the resources in a CDN. We can get a question if the resources can be cased at the client, why do we need a CDN? One of the obvious reasons is we can purge a CDNs cache, but we have no control over the users client cache. If a bad resource is cached indefinitely at the client, there is no way to purge it unless it is done by the user. So how do we cache it at the CDN.
+`max-age` directive is used by `private` cache stores (the client), but we can also cache the resources in a CDN. We can get a question if the resources can be cased at the client, why do we need a CDN? One of the obvious reasons is we can purge a CDNs cache, but we have no control over the user's client cache. If a bad resource is cached indefinitely at the client, there is no way to purge it unless it is done by the user. So how do we cache it at the CDN?
 
-CDNs come under the cache store category of `shared` caches (shared between multiple users), and `s-maxage` controls the "freshness" of a source in a shared cache store.
+CDNs come under the cache-store category of `shared` caches (shared between multiple users), and `s-maxage` controls the "freshness" of a source in a shared cache-store.
 
 ### How does it help?
 
@@ -165,9 +165,9 @@ CDNs come under the cache store category of `shared` caches (shared between mult
   <img width="470" height="270" src="./assets/stale_while_revalidate.png" />
 </p>
 
-When the server is busy working to generate a new document with updated information, the CDN marks the resource as `STALE` and sennds back the stale response to the user so that the user has something to look at till the CDNs cache is updated with the "Fresh" resource. The next user visting will get the updated resources from the CDN.
+When the server is busy working to generate a new document with updated information, the CDN marks the resource as `STALE` and sends back the stale response to the user so that the user has something to look at till the CDNs cache is updated with the "Fresh" resource. The next user visiting will get the updated resources from the CDN.
 
-This type of caching is great when the content of the resources wont change frequently, but we're giving an option that even though it changes it'll not be stale for a long time!
+This type of caching is great when the content of the resources won't change frequently, but we're giving an option that even though it changes it'll not be stale for a long time!
 
 ![MDN Cache](https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching/http_cache_type.png)
 
