@@ -22,7 +22,13 @@ const server = http.createServer((req, res) => {
     content = generateJunk(content);
     content += "</body></html>";
 
+    const etagFromClient = req.headers["if-none-match"];
+
     const etag = crypto.createHash("md5").update(content).digest("hex");
+
+    if (etag === etagFromClient) {
+      return res.writeHead(304).end();
+    }
 
     res.writeHead(200, {
       "Content-Type": "text/html; charset=utf-8",
