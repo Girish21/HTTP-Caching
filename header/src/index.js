@@ -1,4 +1,5 @@
 const http = require("http");
+const crypto = require("crypto");
 
 const HTML =
   '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0">';
@@ -20,9 +21,13 @@ const server = http.createServer((req, res) => {
       '<title>Home</title></head><body><header><nav><a href="/">Home</a><a href="/team">Team</a></nav></header>';
     content = generateJunk(content);
     content += "</body></html>";
+
+    const etag = crypto.createHash("md5").update(content).digest("hex");
+
     res.writeHead(200, {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "max-age=10",
+      Etag: etag,
     });
     res.write(content);
     res.end();
