@@ -11,7 +11,7 @@ The performance of websites and applications can be significantly improved by re
 Let's look at a typical server-client setup.
 
 <p align="center">
-  <img width="300" height="150" src="./assets/typical_server.png" />
+  <img width="300" height="150" src="https://github.com/Girish21/HTTP-Caching/blob/66d652bf70d90594055984f683513500d1a4fd69/assets/typical_server.png" />
 </p>
 
 The client request some data from the server, the server works on it and returns a response to the client. But, this is not optimal for performance and we can do better. Let's see how.
@@ -37,7 +37,7 @@ Cache-Control: no-cache
 ```
 
 <p align="center">
-  <img width="300" height="150" src="./assets/revalidate.png" />
+  <img width="300" height="150" src="https://github.com/Girish21/HTTP-Caching/blob/66d652bf70d90594055984f683513500d1a4fd69/assets/revalidate.png" />
 </p>
 
 ### Public and Private
@@ -160,7 +160,7 @@ CDNs come under the cache-store category of `shared` caches (shared between mult
 ### How does it help?
 
 <p align="center">
-  <img width="470" height="270" src="./assets/stale_while_revalidate.png" />
+  <img width="470" height="270" src="https://github.com/Girish21/HTTP-Caching/blob/66d652bf70d90594055984f683513500d1a4fd69/assets/stale_while_revalidate.png" />
 </p>
 
 When the server is busy working to generate a new document with updated information, the CDN marks the resource as `STALE` and sends back the stale response to the user so that the user has something to look at till the CDNs cache is updated with the "Fresh" resource. The next user visiting will get the updated resources from the CDN.
