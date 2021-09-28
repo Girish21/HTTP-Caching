@@ -1,7 +1,7 @@
 const express = require("express")();
 
 express.get("/", async (_, res) => {
-  console.log("🛠 Server wroking");
+  console.log("🛠 Server - Wroking");
 
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
@@ -22,7 +22,7 @@ express.get("/", async (_, res) => {
     .status(200)
     .setHeader(
       "Cache-Control",
-      "max-age=5, s-maxage=20, stale-while-revalidate=20"
+      "max-age=5, s-maxage=5, stale-while-revalidate=10"
     )
     .setHeader("Content-Type", "text/html; charset=utf-8")
     .send(html)
