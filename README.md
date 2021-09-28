@@ -10,9 +10,7 @@ The performance of websites and applications can be significantly improved by re
 
 Let's look at a typical server-client setup.
 
-<p align="center">
-  <img width="300" height="150" src="https://res.cloudinary.com/dhtwxe58j/image/upload/v1632165999/HTTP-Caching/typical_server_prjcxk.png" />
-</p>
+![typical server with each request reaching the origin server](https://res.cloudinary.com/dhtwxe58j/image/upload/v1632165999/HTTP-Caching/typical_server_prjcxk.png)
 
 The client request some data from the server, the server works on it and returns a response to the client. But, this is not optimal for performance and we can do better. Let's see how.
 
@@ -36,9 +34,7 @@ This directive is interesting, the cache-store will validate the staleness of th
 Cache-Control: no-cache
 ```
 
-<p align="center">
-  <img width="300" height="170" src="https://res.cloudinary.com/dhtwxe58j/image/upload/v1632166015/HTTP-Caching/revalidate_xs8afh.png" />
-</p>
+![data cached at share store but must revalidate](https://res.cloudinary.com/dhtwxe58j/image/upload/v1632166015/HTTP-Caching/revalidate_xs8afh.png)
 
 ### Public and Private
 
@@ -66,7 +62,7 @@ Cache-Control: max-age=<seconds>
 
 The cache store must verify the status stale with the origin server before using the cached resource.
 
-So what is the difference with `no-cache directive? The important distinction is when the`no-cache`directive is used the cache-store will return the cached resource even if the origin server fails to validate the staleness of the cache, whereas if`must-revalidate directive is used, and if the origin server fails to validate the staleness of a cached resource, a `504` error is thrown and the stale resource is not used by the client.
+So what is the difference with `no-cache` directive? The important distinction is when the `no-cache` directive is used the cache-store will return the cached resource even if the origin server fails to validate the staleness of the cache, whereas if`must-revalidate` directive is used, and if the origin server fails to validate the staleness of a cached resource, a `504` error is thrown and the stale resource is not used by the client.
 
 Thus `must-revalidate` should be used only for critical transactions.
 _(there is a better way to handle this cache and we'll see later)_
@@ -159,9 +155,7 @@ CDNs come under the cache-store category of `shared` caches (shared between mult
 
 ### How does it help?
 
-<p align="center">
-  <img width="470" height="270" src="https://res.cloudinary.com/dhtwxe58j/image/upload/v1632166026/HTTP-Caching/stale_while_revalidate_xggbwa.png" />
-</p>
+![demonstration of s-maxage with the CDN returning the stale document where as it's refetching the "fresh" document in the background](https://res.cloudinary.com/dhtwxe58j/image/upload/v1632166026/HTTP-Caching/stale_while_revalidate_xggbwa.png)
 
 When the server is busy working to generate a new document with updated information, the CDN marks the resource as `STALE` and sends back the stale response to the user so that the user has something to look at till the CDNs cache is updated with the "Fresh" resource. The next user visiting will get the updated resources from the CDN.
 
