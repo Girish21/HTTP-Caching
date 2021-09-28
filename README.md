@@ -64,9 +64,13 @@ Cache-Control: max-age=<seconds>
 
 ### Validation
 
+```sh
+Cache-Control: must-revalidate
+```
+
 The cache store must verify the status stale with the origin server before using the cached resource.
 
-So what is the difference with `no-cache` directive? The important distinction is when the `no-cache` directive is used the cache-store will return the cached resource even if the origin server fails to validate the staleness of the cache, whereas if`must-revalidate` directive is used, and if the origin server fails to validate the staleness of a cached resource, a `504` error is thrown and the stale resource is not used by the client.
+So what is the difference with `no-cache` directive? The important distinction is when the `no-cache` directive is used the cache-store will return the cached resource even if the origin server fails to validate the staleness of the cache, whereas if `must-revalidate` directive is used, and if the origin server fails to validate the staleness of a cached resource, a `504` error is thrown and the stale resource is not used by the client.
 
 Thus `must-revalidate` should be used only for critical transactions.
 _(there is a better way to handle this cache and we'll see later)_
@@ -101,7 +105,7 @@ Cache-Control: max-age=10
 
 ## Freshness
 
-Caching keeps the performance of the website fast and makes the website responsive. But, as the famous saying, caching is hard if not done right.
+Caching keeps the performance of the website fast and makes the website responsive.
 
 As we want the website to be fast and responsive, we also want our users to consume fresh data and not consume stale data. So how do we make sure the cache stays fresh and is not stale?
 
@@ -153,9 +157,21 @@ I have not disclosed another `Cache-Control` directive yet.
 
 ### s-maxage
 
-`max-age` directive is used by `private` cache stores (the client), but we can also cache the resources in a CDN. We can get a question if the resources can be cased at the client, why do we need a CDN? One of the obvious reasons is we can purge a CDNs cache, but we have no control over the user's client cache. If a bad resource is cached indefinitely at the client, there is no way to purge it unless it is done by the user. So how do we cache it at the CDN?
+`max-age` directive is used by `private` cache stores (the client), but we can also cache the resources in a CDN. We can get a question if the resources can be cased at the client, why do we need a CDN? One of the obvious reasons is we can purge a CDNs cache, but we have no control over the user's client cache. If a bad resource is cached indefinitely at the client, there is no way to purge it unless it is done by the user.
+
+So how do we cache it at the CDN?
 
 CDNs come under the cache-store category of `shared` caches (shared between multiple users), and `s-maxage` controls the "freshness" of a source in a shared cache-store.
+
+### stale-while-revalidate directive
+
+This directive helps us to achieve a nice balance between immediacy—_loading cached content right away_—and freshness—_ensuring updates to the cached content are used in the future_.
+
+If the data is still _fresh_ the cached resource is served, if it is _stale_ something interesting happens. The cache store performs the other age-based check, is the age of the cached response within the window of time covered by the `stale-while-revalidate` setting?
+
+If the age of the cached resource falls between the window specified by `stale-while-revalidate` directive, the stale resource is used to full fill the request. At the same time, a _revalidation_ request is sent to the origin server to fetch _fresh_ resource. And this happens in a way that does not delay the response of cached resources.
+
+If the age falls beyond the range specified by the directive, then the _stale_ resource will not be used to full fill the request. The resource is fetched from the origin server, and as well populating the cache.
 
 ### How does it help?
 
