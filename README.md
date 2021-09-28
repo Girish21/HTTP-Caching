@@ -176,7 +176,7 @@ If the age falls beyond the range specified by the directive, then the _stale_ r
 ### How does it help?
 
 <p align="center">
-  <img width="470" height="270" alt="demonstration of s-maxage with the CDN returning the stale document where as it's refetching the fresh document in the background" src="https://res.cloudinary.com/dhtwxe58j/image/upload/v1632166026/HTTP-Caching/stale_while_revalidate_xggbwa.png" />
+  <img width="670" height="270" alt="demonstration of s-maxage with the CDN returning the stale document where as it's refetching the fresh document in the background" src="https://res.cloudinary.com/dhtwxe58j/image/upload/v1632855458/HTTP-Caching/stale_while_revalidate_wnivz6.png" />
 </p>
 
 When the server is busy working to generate a new document with updated information, the CDN marks the resource as `STALE` and sends back the stale response to the user so that the user has something to look at till the CDNs cache is updated with the "Fresh" resource. The next user visiting will get the updated resources from the CDN.
