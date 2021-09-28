@@ -10,7 +10,9 @@ The performance of websites and applications can be significantly improved by re
 
 Let's look at a typical server-client setup.
 
-![typical server with each request reaching the origin server](https://res.cloudinary.com/dhtwxe58j/image/upload/v1632165999/HTTP-Caching/typical_server_prjcxk.png)
+<p align="center">
+  <img width="300" height="150" alt="typical server with each request reaching the origin server" src="https://res.cloudinary.com/dhtwxe58j/image/upload/v1632165999/HTTP-Caching/typical_server_prjcxk.png" />
+</p>
 
 The client request some data from the server, the server works on it and returns a response to the client. But, this is not optimal for performance and we can do better. Let's see how.
 
@@ -22,7 +24,7 @@ We can do that by using the `Cache-Control` header field. We can use this header
 
 This directive disables all the caching of client requests or server responses. Every request will hit the server and the full response is downloaded every time.
 
-```js
+```sh
 Cache-Control: no-store
 ```
 
@@ -34,7 +36,9 @@ This directive is interesting, the cache-store will validate the staleness of th
 Cache-Control: no-cache
 ```
 
-![data cached at share store but must revalidate](https://res.cloudinary.com/dhtwxe58j/image/upload/v1632166015/HTTP-Caching/revalidate_xs8afh.png)
+<p align="center">
+  <img width="300" height="170" alt="data cached at share store but must revalidate" src="https://res.cloudinary.com/dhtwxe58j/image/upload/v1632166015/HTTP-Caching/revalidate_xs8afh.png" />
+</p>
 
 ### Public and Private
 
@@ -155,7 +159,9 @@ CDNs come under the cache-store category of `shared` caches (shared between mult
 
 ### How does it help?
 
-![demonstration of s-maxage with the CDN returning the stale document where as it's refetching the "fresh" document in the background](https://res.cloudinary.com/dhtwxe58j/image/upload/v1632166026/HTTP-Caching/stale_while_revalidate_xggbwa.png)
+<p align="center">
+  <img width="470" height="270" alt="demonstration of s-maxage with the CDN returning the stale document where as it's refetching the fresh document in the background" src="https://res.cloudinary.com/dhtwxe58j/image/upload/v1632166026/HTTP-Caching/stale_while_revalidate_xggbwa.png" />
+</p>
 
 When the server is busy working to generate a new document with updated information, the CDN marks the resource as `STALE` and sends back the stale response to the user so that the user has something to look at till the CDNs cache is updated with the "Fresh" resource. The next user visiting will get the updated resources from the CDN.
 
