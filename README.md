@@ -32,7 +32,7 @@ Cache-Control: no-store
 
 This directive is interesting, the cache-store will validate the staleness of the cache with the origin server and if unchanged the cached version is returned to the client.
 
-```js
+```sh
 Cache-Control: no-cache
 ```
 
@@ -44,13 +44,13 @@ Cache-Control: no-cache
 
 The `Public` directive indicates that the response may be cached by any cache. Useful for caching assets like web fonts, images, style sheet
 
-```js
+```sh
 Cache-Control: public
 ```
 
 The `Private` directive indicates that the response is intended for a single user only and must not be stored by a shared cache.
 
-```js
+```sh
 Cache-Control: private
 ```
 
@@ -58,7 +58,7 @@ Cache-Control: private
 
 We can also specifically control the maximum amount of time a resource is considered **_"fresh"_**. This directive is relative to the time of the request.
 
-```js
+```sh
 Cache-Control: max-age=<seconds>
 ```
 
@@ -85,7 +85,7 @@ Let's try adding some different caching headers.
 
 Let's try disabling the cache of the `teams` page,
 
-```js
+```sh
 Cache-Control: no-store
 ```
 
@@ -95,7 +95,7 @@ Nothing much changed, or is it? Let's try clicking on the back and forward navig
 
 Let's try caching the `teams` page for 10 seconds,
 
-```js
+```sh
 Cache-Control: max-age=10
 ```
 
