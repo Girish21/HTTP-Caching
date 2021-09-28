@@ -153,8 +153,6 @@ The problem with ETag is to validate the staleness of a cached resource the clie
 
 This is where CDN comes in. What CDN does is take the resources from the origin server and keep the resources close to the users across the "global" regions, so the latency will be low and with proper cache configurations, the CDN will not even check the origin server before delivering content to the client. Let's see how.
 
-I have not disclosed another `Cache-Control` directive yet.
-
 ### s-maxage
 
 `max-age` directive is used by `private` cache stores (the client), but we can also cache the resources in a CDN. We can get a question if the resources can be cased at the client, why do we need a CDN? One of the obvious reasons is we can purge a CDNs cache, but we have no control over the user's client cache. If a bad resource is cached indefinitely at the client, there is no way to purge it unless it is done by the user.
