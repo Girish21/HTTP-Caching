@@ -155,7 +155,7 @@ This is where CDN comes in. What CDN does is take the resources from the origin 
 
 ### s-maxage
 
-`max-age` directive is used by `private` cache stores (the client), but we can also cache the resources in a CDN. We can get a question if the resources can be cased at the client, why do we need a CDN? One of the obvious reasons is we can purge a CDNs cache, but we have no control over the user's client cache. If a bad resource is cached indefinitely at the client, there is no way to purge it unless it is done by the user.
+`max-age` directive is used by `private` cache stores (the client), but we can also cache the resources in a CDN. We can get a question if the resources can be cached at the client, why do we need a CDN? One of the obvious reasons is we can purge a CDNs cache, but we have no control over the user's client cache. If a bad resource is cached indefinitely at the client, there is no way to purge it unless it is done by the user.
 
 So how do we cache it at the CDN?
 
